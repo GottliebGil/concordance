@@ -1,22 +1,19 @@
-from fastapi import FastAPI
-from database import SessionLocal, engine
-import models
-import crud
+from fastapi import FastAPI, HTTPException, Depends
+import crud, database
 
 app = FastAPI()
 
-models.Base.metadata.create_all(bind=engine)
-
 
 @app.post("/add_song")
-def add_song(filename: str, song_name: str, artist: str, content: str):
-    session = SessionLocal()
+async def add_song(
+        filename: str,
+        song_name: str,
+        artist: str,
+        content: str,
+        conn: asyncpg.Connection = Depends(database.get_database_connection)
+):
     try:
-        crud.insert_song(session, filename, song_name, artist, content)
-        session.commit()
+        await crud.insert_song(conn, filename, song_name, artist, content)
     except Exception as e:
-        session.rollback()
-        raise e
-    finally:
-        session.close()
+        raise HTTPException(status_code=400, detail=str(e))
     return {"message": "Song added successfully!"}

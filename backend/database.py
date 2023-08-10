@@ -1,8 +1,12 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import DeclarativeBase
-from sqlalchemy.orm import sessionmaker
+import asyncpg
+from fastapi import Depends
 
 DATABASE_URL = "postgresql://user:password@localhost:5432/mydatabase"
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = DeclarativeBase()
+
+
+async def get_database_connection():
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        yield conn
+    finally:
+        await conn.close()
