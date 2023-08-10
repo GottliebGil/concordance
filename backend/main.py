@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends
-import crud, database
+import crud
+import database
+import asyncpg
 
 app = FastAPI()
 
