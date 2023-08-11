@@ -1,21 +1,11 @@
-from fastapi import FastAPI, HTTPException, Depends
-import crud
-import database
-import asyncpg
+import uvicorn
+from fastapi import FastAPI
+
+from routes import song_routes
 
 app = FastAPI()
 
+app.include_router(song_routes.router)
 
-@app.post("/add_song")
-async def add_song(
-        filename: str,
-        song_name: str,
-        artist: str,
-        content: str,
-        conn: asyncpg.Connection = Depends(database.get_database_connection)
-):
-    try:
-        await crud.insert_song(conn, filename, song_name, artist, content)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    return {"message": "Song added successfully!"}
+if __name__ == '__main__':
+    uvicorn.run(app, host="0.0.0.0", port=8000)

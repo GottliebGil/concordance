@@ -1,7 +1,6 @@
 import asyncpg
-from fastapi import Depends
 
-DATABASE_URL = "postgresql://user:password@localhost:5432/mydatabase"
+DATABASE_URL = "postgresql://localhost:5432/concordance"
 
 
 async def get_database_connection():
