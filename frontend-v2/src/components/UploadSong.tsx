@@ -16,7 +16,7 @@ function UploadSong() {
             const fileContent = await file.text()
 
             try {
-                const response = await fetch("add_song", {
+                const response = await fetch("http://localhost:8000/api/songs/add", {
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json"
@@ -38,11 +38,14 @@ function UploadSong() {
     };
 
     return (
-        <div className={"flex flex-col gap-4"}>
-            <input type="file" onChange={handleFileChange}/>
-            <input type="text" placeholder={"Artist name"} onChange={(e) => setArtistName(e.target.value)}/>
-            <input type="text" placeholder={"Song name"} onChange={(e) => setSongName(e.target.value)}/>
-            <button onClick={handleUpload}>Upload</button>
+        <div className={"flex flex-col gap-2"}>
+            <div className={"text-xl"}>Upload new song</div>
+            <div className={"flex flex-col gap-4"}>
+                <input type="file" onChange={handleFileChange}/>
+                <input type="text" placeholder={"Artist name"} onChange={(e) => setArtistName(e.target.value)}/>
+                <input type="text" placeholder={"Song name"} onChange={(e) => setSongName(e.target.value)}/>
+                <button onClick={handleUpload}>Upload</button>
+            </div>
         </div>
     );
 }

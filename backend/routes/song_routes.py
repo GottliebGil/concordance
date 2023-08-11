@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 import asyncpg
 from pydantic import BaseModel
 
-import crud
+from dependencies import crud
 import database
 
 router = APIRouter()
@@ -15,18 +15,30 @@ class AddSongRequest(BaseModel):
     content: str
 
 
-@router.post("/add_song")
+@router.post("/add")
 async def add_song(
         request: AddSongRequest,
         conn: asyncpg.Connection = Depends(database.get_database_connection)
 ):
+    separated_file_name = request.file_name.split(" - ")
     try:
-        await conn.execute(
-            'SELECT add_song($1, $2, $3, $4)',
-            request.file_name, request.song_name, request.artist_name, request.content
+        if not request.artist_name or not request.song_name:
+            request.artist_name = separated_file_name[0]
+            request.song_name = separated_file_name[1].split(".")[0]
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="If the song and artist names aren't passed, the file format must be 'ARTIST_NAME - SONG_NAME'"
         )
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    await crud.add_song(
+        request.song_name, request.artist_name, request.content, conn
+    )
     return {"message": "Song added successfully!"}
 
-# Add other song-related routes here...
+
+@router.get("/search")
+async def search_songs(
+        q: str, conn: asyncpg.Connection = Depends(database.get_database_connection)
+):
+    songs = await crud.search_song(q, conn)
+    return songs
