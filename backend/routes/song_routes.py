@@ -42,3 +42,11 @@ async def search_songs(
 ):
     songs = await crud.search_song(q, conn)
     return songs
+
+
+@router.get("/")
+async def get_all_songs(
+        conn: asyncpg.Connection = Depends(database.get_database_connection)
+):
+    songs = await crud.get_all_songs(conn)
+    return songs

@@ -3,7 +3,7 @@
 CREATE TABLE artists
 (
     id   SERIAL PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE songs
@@ -12,6 +12,8 @@ CREATE TABLE songs
     name      TEXT                            NOT NULL,
     artist_id INTEGER REFERENCES artists (id) NOT NULL
 );
+
+CREATE UNIQUE INDEX idx_song_name_artist_id ON songs (name, artist_id);
 
 
 CREATE TABLE words
