@@ -1,6 +1,7 @@
 import React, {useContext} from "react";
 import Song from "../entities/Song";
-import {SearchContext, SearchEventContext} from "react-ctrl-f";
+import {SearchContext, SearchEventContext, MatchText} from "react-ctrl-f";
+import {Box, Button, Modal, TextField, Typography} from "@mui/material";
 
 type SongLyricsModalProps = {
     isModalOpen: boolean;
@@ -11,6 +12,7 @@ type SongLyricsModalProps = {
 const SongLyricsModal: React.FC = ({isModalOpen, onClose, song}: SongLyricsModalProps) => {
     const {searchValue, activeCount, totalCount} = useContext(SearchContext);
     const {onSearchChange, onPrev, onNext} = useContext(SearchEventContext);
+
     const style = {
         position: 'absolute' as 'absolute',
         top: '50%',
@@ -21,44 +23,39 @@ const SongLyricsModal: React.FC = ({isModalOpen, onClose, song}: SongLyricsModal
         bgcolor: 'background.paper',
         border: '2px solid #000',
         boxShadow: 24,
-        p: 4,
-        overflow: 'scroll'
+        p: 4
     };
     return (
         <Modal
             open={isModalOpen}
             onClose={onClose}>
-            <Box sx={style}>
-                <SearchProvider>
-                    <input
-                        style={{width: 200, marginRight: '12px', height: '24px'}}
-                        value={searchValue}
-                        onChange={onSearchChange}
-                    />
-                    <button
-                        style={{height: '28px'}}
+            <Box sx={style} className={'flex flex-col gap-4'}>
+                <div className={'flex flex-row items-baseline gap-2'}>
+                    <TextField label={"Search in song"} variant={"standard"} value={searchValue}
+                               onChange={onSearchChange}/>
+                    <Button
                         title='Up'
-                        onClick={() => onPrev(100)}
-                    >
-                        Prev
-                    </button>
-                    <span style={{padding: '0px 12px'}}>
-          {activeCount}/{totalCount}
-        </span>
-                    <button
-                        style={{height: '28px'}}
+                        disabled={!searchValue}
+                        onClick={() => onPrev(100)}>Prev
+                    </Button>
+                    <span className={!searchValue ? 'opacity-50' : ''}>
+                      {activeCount}/{totalCount}
+                    </span>
+                    <Button
                         title='Down'
-                        onClick={() => onNext(100)}
-                    >
-                        Next
-                    </button>
-                </SearchProvider>
-                <Typography variant={"h6"} component={"h2"}>
-                    {song.name}
-                </Typography>
-                <Typography className={'whitespace-pre-line'} id="modal-modal-description" sx={{mt: 2}}>
-                    <MatchText id={'match-1'}>{song.content}</MatchText>
-                </Typography>
+                        disabled={!searchValue}
+                        onClick={() => onNext(100)}>Next
+                    </Button>
+                </div>
+                <div className={'overflow-scroll h-full'}>
+                    <Typography variant={"h6"} component={"h2"}>
+                        {song.name}
+                    </Typography>
+                    <Typography className={'whitespace-pre-line'} id="modal-modal-description" sx={{mt: 2}}>
+                        <MatchText id={'match-song-content'}>{song.content}</MatchText>
+                    </Typography>
+                </div>
+
             </Box>
         </Modal>
     )

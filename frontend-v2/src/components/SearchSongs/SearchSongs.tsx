@@ -1,4 +1,4 @@
-import React, {useContext, useMemo, useState} from 'react';
+import React, {useCallback, useContext, useMemo, useState} from 'react';
 import Song from '../../entities/Song'
 import {
     MatchText, SearchProvider, SearchContext,
@@ -25,14 +25,9 @@ import {setIsSearching, setSearchOptions, setSongs} from "../../store/songsSlice
 const SearchSongs: React.FC = () => {
     const songs = useSelector((state) => state.songs.songs);
     const isSearching = useSelector((state) => state.songs.isSearching);
-    const searchOptions = useSelector((state) => state.songs.searchOptions);
-    const searchQuery = useMemo(() => searchOptions.query, [searchOptions]);
-    const dispatch = useDispatch();
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [songInModal, setSongInModal] = useState<Song | null>(null);
-
-
 
     const openSong = async (song: Song) => {
         await setSongInModal(song);
@@ -43,10 +38,17 @@ const SearchSongs: React.FC = () => {
         await setSongInModal(null);
     }
 
+    const onCustomScroll = useCallback((id, fixedHeaderHeight) => {
+        const dom = document.getElementById(id);
+        if (dom) {
+            dom.scrollIntoView();
+        }
+    }, []);
+
 
     return (
         <div>
-            <SearchBar />
+            <SearchBar/>
             {
                 isSearching && <p>Loading...</p>
             }
@@ -64,10 +66,15 @@ const SearchSongs: React.FC = () => {
             </List>
             {
                 songInModal && (
-                    <SongLyricsModal
-                        isModalOpen={isModalOpen}
-                        onClose={closeSong}
-                        song={songInModal}/>
+                    <SearchProvider value={{
+                        fixedHeaderHeight: 90,
+                        onScroll: onCustomScroll,
+                    }}>
+                        <SongLyricsModal
+                            isModalOpen={isModalOpen}
+                            onClose={closeSong}
+                            song={songInModal}/>
+                    </SearchProvider>
                 )
             }
         </div>

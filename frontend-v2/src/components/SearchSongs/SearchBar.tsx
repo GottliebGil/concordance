@@ -2,13 +2,14 @@ import React, {useMemo} from "react";
 import {Button, Checkbox, FormControlLabel, TextField} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import {setIsSearching, setSearchOptions, setSongs} from "../../store/songsSlice";
-import {searchSongs, getAllSongs} from "../../hooks/Songs";
+import useSongs from "../../hooks/useSongs";
 
 const SearchBar: React.FC = () => {
     const isSearching = useSelector((state) => state.songs.isSearching);
     const searchOptions = useSelector((state) => state.songs.searchOptions);
     const searchQuery = useMemo(() => searchOptions.query, [searchOptions]);
     const dispatch = useDispatch();
+    const {searchSongs, getAllSongs} = useSongs();
     const setSearchMode = async (e) => {
         e.preventDefault();
         await dispatch(setIsSearching(true));
