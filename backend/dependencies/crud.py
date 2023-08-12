@@ -45,7 +45,8 @@ ORDER BY l.song_id;
     return result[0]['lyrics']
 
 
-async def search_song(search_query: str, conn: asyncpg.Connection):
+async def search_song(search_query: str, in_title: bool, in_lyrics: bool, in_artist_name: bool,
+                      conn: asyncpg.Connection):
     query = dedent("""
 WITH song_lyrics AS (
     SELECT
@@ -53,6 +54,7 @@ WITH song_lyrics AS (
         song_words.song_id
     FROM song_words
     INNER JOIN words ON song_words.word_id = words.id
+        WHERE $2
     GROUP BY song_words.song_id
 ),
 songs_matched_by_lyrics AS (
@@ -61,18 +63,23 @@ songs_matched_by_lyrics AS (
     INNER JOIN songs ON song_lyrics.song_id = songs.id
     INNER JOIN artists ON songs.artist_id = artists.id
     WHERE song_lyrics.lyrics ILIKE $1
+        
 ),
 songs_matched_by_artist AS (
     SELECT artists.name AS artist_name, songs.name
     FROM artists
     INNER JOIN songs ON artists.id = songs.artist_id
-    WHERE artists.name ILIKE $1
+    WHERE
+        artists.name ILIKE $1
+        AND $3
 ),
 songs_matched_by_name AS (
     SELECT artists.name AS artist_name, songs.name
     FROM songs
     INNER JOIN artists ON artists.id = songs.artist_id
-    WHERE songs.name ILIKE $1
+    WHERE
+        songs.name ILIKE $1
+        AND $4
 )
 SELECT * FROM songs_matched_by_artist
 UNION DISTINCT 
@@ -80,7 +87,7 @@ SELECT * FROM songs_matched_by_name
 UNION DISTINCT 
 SELECT * FROM songs_matched_by_lyrics
     """)
-    results = await conn.fetch(query, f"%{search_query}%")
+    results = await conn.fetch(query, f"%{search_query}%", in_lyrics, in_artist_name, in_title)
     return [
         Song(
             name=row['name'],

@@ -38,9 +38,13 @@ async def add_song(
 
 @router.get("/search")
 async def search_songs(
-        q: str, conn: asyncpg.Connection = Depends(database.get_database_connection)
+        q: str,
+        in_title: bool = True,
+        in_lyrics: bool = True,
+        in_artist_name: bool = True,
+        conn: asyncpg.Connection = Depends(database.get_database_connection)
 ):
-    songs = await crud.search_song(q, conn)
+    songs = await crud.search_song(q, in_title, in_lyrics, in_artist_name, conn)
     return songs
 
 

@@ -3,6 +3,12 @@ import React, {useState} from 'react';
 import UploadSong from './components/UploadSong';
 import SearchSongs from "./components/SearchSongs";
 
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
+
 const App: React.FC = () => {
     const [currentTab, setCurrentTab] = useState<Number>(1);
     return (
@@ -22,32 +28,24 @@ const App: React.FC = () => {
                             Search for songs
                         </div>
                     </div>
-                )
-            }
-
-            {
-                currentTab == 0 && (
+                ) || (
                     <div className={'flex flex-col gap-2'}>
-                        <div className={'cursor-pointer text-sm bg-teal-100'} onClick={() => setCurrentTab(-1)}>
-                            BACK
+                        <div className={'flex flex-row justify-items-start'}>
+                            <button className={'bg-rose-100 text-sm border-1 rounded p-2'}
+                                    onClick={() => setCurrentTab(-1)}>
+                                BACK
+                            </button>
                         </div>
-                        <UploadSong/>
+                        {
+                            currentTab == 0 && <UploadSong/>
+                        }
+                        {
+                            currentTab == 1 && <SearchSongs/>
+                        }
                     </div>
-
                 )
             }
 
-            {
-                currentTab == 1 && (
-                    <div className={'flex flex-col gap-2'}>
-                        <div className={'cursor-pointer text-sm bg-teal-100'} onClick={() => setCurrentTab(-1)}>
-                            BACK
-                        </div>
-                        <SearchSongs />
-                    </div>
-
-                )
-            }
         </div>
     );
 }
