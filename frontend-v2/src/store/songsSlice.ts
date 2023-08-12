@@ -20,7 +20,8 @@ export const songsSlice = createSlice({
     initialState: {
         songs: [],
         searchOptions: defaultSearchOptions,
-        isSearching: false
+        isSearching: false,
+        searchPosition: null
     },
     reducers: {
         setSongs: (state, action) => {
@@ -31,10 +32,13 @@ export const songsSlice = createSlice({
         },
         setIsSearching: (state, action) => {
             state.isSearching = action.payload;
+        },
+        setSearchPosition: (state, action) => {
+            state.searchPosition = action.payload;
         }
     }
 });
 
 // Export actions and reducer
-export const {setSongs, setSearchOptions, setIsSearching} = songsSlice.actions;
+export const {setSongs, setSearchOptions, setIsSearching, setSearchPosition} = songsSlice.actions;
 export default songsSlice.reducer;

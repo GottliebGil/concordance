@@ -5,6 +5,7 @@ import {Box, Button, Modal, Tooltip, Typography} from "@mui/material";
 import useSongs from "../../hooks/useSongs";
 import LyricsWithPositions from "./LyricWithPositions";
 import SearchInASong from "./SearchInASong";
+import PositionInASong from "./PositionInASong";
 
 type SongLyricsModalProps = {
     isModalOpen: boolean;
@@ -44,6 +45,7 @@ const SongLyricsModal: React.FC = ({isModalOpen, onClose, song}: SongLyricsModal
             onClose={onClose}>
             <Box sx={style} className={'flex flex-col gap-4'}>
                 <SearchInASong/>
+                <PositionInASong/>
                 <div>
                     <Tooltip title={'Word position tooltips are only enabled when search is turned off'}>
                         <span>

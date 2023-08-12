@@ -10,6 +10,11 @@ interface LyricsWithPositionsProps {
 }
 
 const LyricsWithPositions: React.FC = ({songWords}: LyricsWithPositionsProps) => {
+    const searchPositions = useSelector((state) => state.songs.searchPosition)
+    const shouldColour = (line: number, word: number) => {
+        if (!searchPositions) return false;
+        return line === searchPositions.lineIndex && word === searchPositions.wordIndex;
+    }
     return (
         <div className={'flex flex-col gap-2'}>
             {songWords.map(verse => (
