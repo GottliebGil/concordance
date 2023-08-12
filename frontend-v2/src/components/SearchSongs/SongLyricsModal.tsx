@@ -1,7 +1,9 @@
-import React, {useContext} from "react";
-import Song from "../entities/Song";
+import React, {useContext, useMemo, useState} from "react";
+import {Song, Word} from "../../entities/Song";
 import {SearchContext, SearchEventContext, MatchText} from "react-ctrl-f";
-import {Box, Button, Modal, TextField, Typography} from "@mui/material";
+import {Box, Button, Modal, TextField, Tooltip, Typography} from "@mui/material";
+import useSongs from "../../hooks/useSongs";
+import LyricsWithPositions from "./LyricWithPositions";
 
 type SongLyricsModalProps = {
     isModalOpen: boolean;
@@ -12,6 +14,16 @@ type SongLyricsModalProps = {
 const SongLyricsModal: React.FC = ({isModalOpen, onClose, song}: SongLyricsModalProps) => {
     const {searchValue, activeCount, totalCount} = useContext(SearchContext);
     const {onSearchChange, onPrev, onNext} = useContext(SearchEventContext);
+    const [songWords, setSongWords] = useState<Word[][]>([]);
+    const {getSongWords} = useSongs()
+    useMemo(async () => {
+        const words = await getSongWords(song.id);
+        await setSongWords(words);
+    }, [song.id]);
+
+    const enableTooltips = async () => {
+        onSearchChange({target: {value: ''}});
+    }
 
     const style = {
         position: 'absolute' as 'absolute',
@@ -34,7 +46,6 @@ const SongLyricsModal: React.FC = ({isModalOpen, onClose, song}: SongLyricsModal
                     <TextField label={"Search in song"} variant={"standard"} value={searchValue}
                                onChange={onSearchChange}/>
                     <Button
-                        title='Up'
                         disabled={!searchValue}
                         onClick={() => onPrev(100)}>Prev
                     </Button>
@@ -42,18 +53,38 @@ const SongLyricsModal: React.FC = ({isModalOpen, onClose, song}: SongLyricsModal
                       {activeCount}/{totalCount}
                     </span>
                     <Button
-                        title='Down'
                         disabled={!searchValue}
                         onClick={() => onNext(100)}>Next
                     </Button>
+                </div>
+                <div>
+                    <Tooltip title={'Word position tooltips are only enabled when search is turned off'}>
+                        <span>
+                            <Button onClick={enableTooltips} disabled={!searchValue}>
+                                Display word position tooltips
+                            </Button>
+                        </span>
+                    </Tooltip>
                 </div>
                 <div className={'overflow-scroll h-full'}>
                     <Typography variant={"h6"} component={"h2"}>
                         {song.name}
                     </Typography>
-                    <Typography className={'whitespace-pre-line'} id="modal-modal-description" sx={{mt: 2}}>
-                        <MatchText id={'match-song-content'}>{song.content}</MatchText>
-                    </Typography>
+
+                    <div className={'whitespace-pre-line'}>
+                        {
+                            searchValue && (
+                                <MatchText id={'match-song-content'}>
+                                    {song.content}
+                                </MatchText>
+                            )
+                        }
+                        {
+                            !searchValue && (
+                                <LyricsWithPositions songWords={songWords}/>
+                            )
+                        }
+                    </div>
                 </div>
 
             </Box>

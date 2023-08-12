@@ -1,9 +1,9 @@
 from textwrap import dedent
-from typing import Optional
+from typing import Optional, List
 
 import asyncpg
 
-from entities.song import Song
+from entities.song import Song, Word
 
 
 async def add_song(song_name: str, artist_name: str, content: str,
@@ -58,6 +58,22 @@ ORDER BY l.song_id;
     return result[0]['lyrics']
 
 
+async def get_song_words(song_id: int, conn: asyncpg.Connection) -> List[Word]:
+    query = dedent("""
+SELECT words.word, song_words.verse_index, song_words.line_index, song_words.word_index
+FROM song_words
+INNER JOIN songs ON song_words.song_id = songs.id
+INNER JOIN artists ON songs.artist_id = artists.id
+INNER JOIN words ON song_words.word_id = words.id
+WHERE song_words.song_id = $1
+ORDER BY song_words.verse_index, song_words.line_index, song_words.word_index;
+    """)
+    result = await conn.fetch(query, song_id)
+    if not result:
+        return []
+    return [Word(**row) for row in result]
+
+
 async def search_song(search_query: str, in_title: bool, in_lyrics: bool, in_artist_name: bool,
                       conn: asyncpg.Connection):
     query = dedent("""
@@ -71,7 +87,7 @@ WITH song_lyrics AS (
     GROUP BY song_words.song_id
 ),
 songs_matched_by_lyrics AS (
-    SELECT artists.name AS artist_name, songs.name
+    SELECT songs.id, artists.name AS artist_name, songs.name
     FROM song_lyrics
     INNER JOIN songs ON song_lyrics.song_id = songs.id
     INNER JOIN artists ON songs.artist_id = artists.id
@@ -79,7 +95,7 @@ songs_matched_by_lyrics AS (
         
 ),
 songs_matched_by_artist AS (
-    SELECT artists.name AS artist_name, songs.name
+    SELECT songs.id, artists.name AS artist_name, songs.name
     FROM artists
     INNER JOIN songs ON artists.id = songs.artist_id
     WHERE
@@ -87,7 +103,7 @@ songs_matched_by_artist AS (
         AND $3
 ),
 songs_matched_by_name AS (
-    SELECT artists.name AS artist_name, songs.name
+    SELECT songs.id, artists.name AS artist_name, songs.name
     FROM songs
     INNER JOIN artists ON artists.id = songs.artist_id
     WHERE
@@ -103,6 +119,7 @@ SELECT * FROM songs_matched_by_lyrics
     results = await conn.fetch(query, f"%{search_query}%", in_lyrics, in_artist_name, in_title)
     return [
         Song(
+            id=row['id'],
             name=row['name'],
             artist_name=row['artist_name'],
             content=await get_song_lyrics(row['artist_name'], row['name'], conn)
@@ -113,6 +130,7 @@ SELECT * FROM songs_matched_by_lyrics
 async def get_all_songs(conn: asyncpg.Connection):
     query = dedent("""
 SELECT
+    songs.id,
     artists.name AS artist_name,
     songs.name
 FROM songs
@@ -121,6 +139,7 @@ INNER JOIN artists ON songs.artist_id = artists.id
     results = await conn.fetch(query)
     return [
         Song(
+            id=row['id'],
             name=row['name'],
             artist_name=row['artist_name'],
             content=await get_song_lyrics(row['artist_name'], row['name'], conn)

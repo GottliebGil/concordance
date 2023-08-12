@@ -16,7 +16,7 @@ import {
     ListSubheader, Modal,
     TextField, Typography
 } from "@mui/material";
-import SongLyricsModal from "../SongLyricsModal";
+import SongLyricsModal from "./SongLyricsModal";
 import SearchBar from "./SearchBar";
 import {useDispatch, useSelector} from "react-redux";
 import {setIsSearching, setSearchOptions, setSongs} from "../../store/songsSlice";

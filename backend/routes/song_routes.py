@@ -54,3 +54,28 @@ async def get_all_songs(
 ):
     songs = await crud.get_all_songs(conn)
     return songs
+
+
+@router.get("/words")
+async def get_song_words(
+        song_id: int,
+        conn: asyncpg.Connection = Depends(database.get_database_connection)
+):
+    words = await crud.get_song_words(song_id, conn)
+    words_to_verses = []
+    current_verse = []
+    current_line = []
+    prev_verse = 1
+    prev_line = 1
+    for index, word in enumerate(words):
+        if word.line_index > prev_line:
+            current_verse.append(current_line)
+            current_line = []
+            prev_line = word.line_index
+        if word.verse_index > prev_verse:
+            words_to_verses.append(current_verse)
+            current_verse = []
+            prev_verse = word.verse_index
+        current_line.append(word)
+    words_to_verses.append(current_verse)
+    return words_to_verses
