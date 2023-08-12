@@ -1,9 +1,10 @@
 import React, {useContext, useMemo, useState} from "react";
 import {Song, Word} from "../../entities/Song";
 import {SearchContext, SearchEventContext, MatchText} from "react-ctrl-f";
-import {Box, Button, Modal, TextField, Tooltip, Typography} from "@mui/material";
+import {Box, Button, Modal, Tooltip, Typography} from "@mui/material";
 import useSongs from "../../hooks/useSongs";
 import LyricsWithPositions from "./LyricWithPositions";
+import SearchInASong from "./SearchInASong";
 
 type SongLyricsModalProps = {
     isModalOpen: boolean;
@@ -12,8 +13,8 @@ type SongLyricsModalProps = {
 }
 
 const SongLyricsModal: React.FC = ({isModalOpen, onClose, song}: SongLyricsModalProps) => {
-    const {searchValue, activeCount, totalCount} = useContext(SearchContext);
-    const {onSearchChange, onPrev, onNext} = useContext(SearchEventContext);
+    const {searchValue} = useContext(SearchContext);
+    const {onSearchChange} = useContext(SearchEventContext);
     const [songWords, setSongWords] = useState<Word[][]>([]);
     const {getSongWords} = useSongs()
     useMemo(async () => {
@@ -42,21 +43,7 @@ const SongLyricsModal: React.FC = ({isModalOpen, onClose, song}: SongLyricsModal
             open={isModalOpen}
             onClose={onClose}>
             <Box sx={style} className={'flex flex-col gap-4'}>
-                <div className={'flex flex-row items-baseline gap-2'}>
-                    <TextField label={"Search in song"} variant={"standard"} value={searchValue}
-                               onChange={onSearchChange}/>
-                    <Button
-                        disabled={!searchValue}
-                        onClick={() => onPrev(100)}>Prev
-                    </Button>
-                    <span className={!searchValue ? 'opacity-50' : ''}>
-                      {activeCount}/{totalCount}
-                    </span>
-                    <Button
-                        disabled={!searchValue}
-                        onClick={() => onNext(100)}>Next
-                    </Button>
-                </div>
+                <SearchInASong/>
                 <div>
                     <Tooltip title={'Word position tooltips are only enabled when search is turned off'}>
                         <span>
