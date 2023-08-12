@@ -16,23 +16,36 @@ async def add_song(song_name: str, artist_name: str, content: str,
 
 async def get_song_lyrics(artist_name: str, song_name: str, conn: asyncpg.Connection) -> str:
     query = dedent("""
-WITH line_aggregation AS (SELECT s.id                                           AS song_id,
-                                 s.name                                         AS song_name,
-                                 a.name                                         AS artist_name,
-                                 sw.line_index,
-                                 string_agg(w.word, ' ' ORDER BY sw.word_index) AS line_text
-                          FROM songs s
-                                   JOIN song_words sw ON s.id = sw.song_id
-                                   JOIN words w ON w.id = sw.word_id
-                                   JOIN artists a ON s.artist_id = a.id
-                          WHERE a.name = $1
-                                AND s.name = $2
-                          GROUP BY s.id, s.name, a.name, sw.line_index
-                          ORDER BY s.id, sw.line_index)
+WITH line_aggregation AS (
+    SELECT  s.id                                           AS song_id,
+            s.name                                         AS song_name,
+            a.name                                         AS artist_name,
+            sw.line_index,
+            sw.verse_index,
+            string_agg(w.word, ' ' ORDER BY sw.word_index) AS line_text
+    FROM songs s
+        JOIN song_words sw ON s.id = sw.song_id
+        JOIN words w ON w.id = sw.word_id
+        JOIN artists a ON s.artist_id = a.id
+    WHERE a.name = $1
+        AND s.name = $2
+    GROUP BY s.id, s.name, a.name, sw.line_index, sw.verse_index
+    ORDER BY s.id, sw.line_index
+),
+verse_aggregation AS (
+    SELECT  lg.song_id                                           AS song_id,
+            lg.song_name                                         AS song_name,
+            lg.artist_name                                         AS artist_name,
+            lg.verse_index,
+            string_agg(lg.line_text, '\n' ORDER BY lg.verse_index) AS verse_text
+    FROM line_aggregation lg
+    GROUP BY lg.song_id, lg.song_name, lg.artist_name, lg.verse_index
+    ORDER BY lg.song_id, lg.verse_index
+)
 
 SELECT 
-       string_agg(l.line_text, E'\n' ORDER BY l.line_index) AS lyrics
-FROM line_aggregation l
+string_agg(l.verse_text, E'\n\n' ORDER BY l.verse_index) AS lyrics
+FROM verse_aggregation l
          JOIN songs s
               ON l.song_id = s.id
          JOIN artists a ON s.artist_id = a.id
