@@ -1,6 +1,15 @@
 import React, {useState} from 'react';
 import Input from "./infrastructure/Input";
-import {Button, Checkbox, FormControlLabel, FormGroup, TextField} from "@mui/material";
+import {
+    Button,
+    Checkbox,
+    FormControlLabel,
+    FormGroup,
+    List,
+    ListItemButton, ListItemText,
+    ListSubheader,
+    TextField
+} from "@mui/material";
 
 type Song = {
     id: number;
@@ -100,13 +109,15 @@ const SearchSongs: React.FC = () => {
             {
                 !isLoading && !error && songs.length === 0 && <p>No songs found.</p>
             }
-            <ul>
+            <List
+                sx={{width: '100%', maxWidth: 360}}
+            >
                 {songs.map((song) => (
-                    <li key={song.id}>
-                        {song.name} by {song.artist_name}
-                    </li>
+                    <ListItemButton key={song.id}>
+                        <ListItemText primary={song.name + " by " + song.artist_name}/>
+                    </ListItemButton>
                 ))}
-            </ul>
+            </List>
         </div>
     )
         ;
