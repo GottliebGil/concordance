@@ -31,7 +31,7 @@ async def add_word_to_group(
         word_data: WordAdd,
         conn: asyncpg.Connection = Depends(database.get_database_connection)
 ):
-    word_id = await groups_db.add_word_to_specific_group(group_id, word_data.word_id, conn)
+    word_id = await groups_db.add_word_to_specific_group(group_id, word_data.word, conn)
     if not word_id:
         raise HTTPException(status_code=400, detail="Unable to add word to group.")
     return {"word_id": word_id}
@@ -43,7 +43,7 @@ async def remove_word_from_group(
         word_data: WordRemove,
         conn: asyncpg.Connection = Depends(database.get_database_connection)
 ):
-    success = await groups_db.remove_word_from_specific_group(group_id, word_data.word_id, conn)
+    success = await groups_db.remove_word_from_specific_group(group_id, word_data.word, conn)
     if not success:
         raise HTTPException(status_code=400, detail="Unable to remove word from group.")
     return {"status": "word removed successfully"}

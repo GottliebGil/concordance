@@ -3,10 +3,10 @@ import {Button, Checkbox, FormControlLabel, TextField, Tooltip} from "@mui/mater
 import {useDispatch, useSelector} from "react-redux";
 import {setIsSearching, setSearchOptions, setSongs} from "../../store/songsSlice";
 import useSongs from "../../hooks/useSongs";
-import {Word} from "../../entities/Song";
+import {SongWord} from "../../entities/Song";
 
 interface LyricsWithPositionsProps {
-    songWords: Word[][];
+    songWords: SongWord[][];
 }
 
 const LyricsWithPositions: React.FC = ({songWords}: LyricsWithPositionsProps) => {

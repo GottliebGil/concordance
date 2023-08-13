@@ -4,7 +4,7 @@ type Song = {
     artist_name: string;
     content: string;
 };
-type Word = {
+type SongWord = {
     id: number;
     word: string;
     verse_index: number;
@@ -12,4 +12,4 @@ type Word = {
     word_index: number;
 };
 
-export {Song, Word};
+export {Song, SongWord};

@@ -1,5 +1,5 @@
 import React, {useContext, useMemo, useState} from "react";
-import {Song, Word} from "../../entities/Song";
+import {Song, SongWord} from "../../entities/Song";
 import {SearchContext, SearchEventContext, MatchText} from "react-ctrl-f";
 import {Box, Button, Modal, Tooltip, Typography} from "@mui/material";
 import useSongs from "../../hooks/useSongs";
@@ -16,7 +16,7 @@ type SongLyricsModalProps = {
 const SongLyricsModal: React.FC = ({isModalOpen, onClose, song}: SongLyricsModalProps) => {
     const {searchValue} = useContext(SearchContext);
     const {onSearchChange} = useContext(SearchEventContext);
-    const [songWords, setSongWords] = useState<Word[][]>([]);
+    const [songWords, setSongWords] = useState<SongWord[][]>([]);
     const {getSongWords} = useSongs()
     useMemo(async () => {
         const words = await getSongWords(song.id);

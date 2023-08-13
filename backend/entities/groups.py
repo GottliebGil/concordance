@@ -13,8 +13,8 @@ class GroupCreate(BaseModel):
 
 
 class WordAdd(BaseModel):
-    word_id: int
+    word: str
 
 
 class WordRemove(BaseModel):
-    word_id: int
+    word: str

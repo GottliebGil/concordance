@@ -1,4 +1,4 @@
-import {Word, Song} from "../entities/Song";
+import {SongWord, Song} from "../entities/Song";
 import {setIsSearching, setSongs} from "../store/songsSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {useMemo} from "react";
@@ -38,7 +38,7 @@ const useSongs = () => {
         }
     };
 
-    const getSongWords = async (song_id: number): Promise<Word[][]> => {
+    const getSongWords = async (song_id: number): Promise<SongWord[][]> => {
         try {
             const response = await fetch(`http://localhost:8000/api/songs/words?song_id=${song_id}`);
             return await response.json();
