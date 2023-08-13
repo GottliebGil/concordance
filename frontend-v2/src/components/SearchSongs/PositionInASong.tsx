@@ -14,18 +14,10 @@ const PositionInASong: React.FC = () => {
     useMemo(async () => {
         await dispatch(
             setSearchPosition(
-                {lineIndex: null, wordIndex: null}
-            )
-        );
-    }, [lineIndex, wordIndex]);
-
-    const _handleGo = async () => {
-        await dispatch(
-            setSearchPosition(
                 {lineIndex: parseInt(lineIndex), wordIndex: parseInt(wordIndex)}
             )
         );
-    }
+    }, [lineIndex, wordIndex]);
     return (
         <div className={'flex flex-row items-baseline gap-2'}>
             <TextField label={"Line index"} variant={"standard"} value={lineIndex}
@@ -36,10 +28,6 @@ const PositionInASong: React.FC = () => {
                        disabled={searchValue}
                        type={'number'}
                        onChange={(e) => setWordIndex(e.target.value)}/>
-            <Button
-                disabled={!lineIndex || !wordIndex || searchValue}
-                onClick={_handleGo}>Go
-            </Button>
         </div>
     )
 };
