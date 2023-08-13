@@ -55,12 +55,25 @@ const useGroups = () => {
         await getGroups();
     }
 
+    const createGroup = async (groupName: string) => {
+        await fetch(`http://localhost:8000/api/groups/`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "name": groupName
+            })
+        });
+    }
+
     return {
         getGroups,
         getGroupWords,
         getWordsNotInGroup,
         removeWordFromGroup,
-        addWordToGroup
+        addWordToGroup,
+        createGroup
     }
 }
 

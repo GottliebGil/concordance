@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 
 import {
-    Button,
+    Button, Input,
     List,
-    ListItemButton, ListItemText, Typography,
+    ListItemButton, ListItemText, TextField, Typography,
 } from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import useGroups from "../../hooks/useGroups";
@@ -17,7 +17,8 @@ const ManageWordGroups: React.FC = () => {
     const dispatch = useDispatch();
     const [groupInModal, setGroupInModal] = useState<Group | undefined>(undefined);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const {getGroups} = useGroups();
+    const [newGroupName, setNewGroupName] = useState<string>('');
+    const {getGroups, createGroup} = useGroups();
 
     useEffect(() => {
         getGroups();
@@ -33,11 +34,31 @@ const ManageWordGroups: React.FC = () => {
         await setGroupInModal(undefined);
     }
 
+    const onCreateNewGroup = async (e) => {
+        e.preventDefault();
+        await createGroup(newGroupName);
+        await setNewGroupName('');
+        await getGroups();
+    }
+
     return (
         <div className={'flex flex-col gap-2'}>
             <Typography variant={"h6"} component={"h2"}>
                 Groups Management Page
             </Typography>
+            <Typography variant={"h6"} component={"h3"}>
+                Create new group
+            </Typography>
+            <div>
+                <TextField label={"Group name"} variant={"standard"} value={newGroupName}
+                           onChange={async (e) => {
+                               await setNewGroupName(e.target.value);
+                           }}/>
+                <Button
+                    disabled={!newGroupName}
+                    onClick={onCreateNewGroup}>Create
+                </Button>
+            </div>
             <Typography variant={"h6"} component={"h3"}>
                 Groups
             </Typography>

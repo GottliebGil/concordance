@@ -13,7 +13,7 @@ import ManageWordGroups from "./components/ManageWordGroups";
 
 
 const App: React.FC = () => {
-    const [currentTab, setCurrentTab] = useState<Number>(1);
+    const [currentTab, setCurrentTab] = useState<Number>(2);
     return (
         <Provider store={store}>
             <div className="flex flex-col gap-4">
