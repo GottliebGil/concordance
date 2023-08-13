@@ -28,7 +28,7 @@ const useSongs = () => {
 
     const getAllSongs = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/api/songs`);
+            const response = await fetch(`http://localhost:8000/api/songs/`);
             const data: Song[] = await response.json();
             dispatch(setSongs(data));
         } catch (err) {
