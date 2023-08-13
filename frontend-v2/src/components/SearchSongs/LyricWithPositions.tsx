@@ -35,7 +35,7 @@ const LyricsWithPositions: React.FC = ({songWords}: LyricsWithPositionsProps) =>
                                                 title={`Verse ${word.verse_index}, Line ${word.line_index}, Word ${word.word_index}`}>
                                             <span
                                                 className={`hover:text-slate-400 ${getBackground(word.line_index, word.word_index)}`}>
-                                                {word.word}
+                                                {word.appearance}
                                             </span>
                                         </Tooltip>
                                         </span>

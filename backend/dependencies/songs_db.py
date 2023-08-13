@@ -22,7 +22,7 @@ WITH line_aggregation AS (
             a.name                                         AS artist_name,
             sw.line_index,
             sw.verse_index,
-            string_agg(w.word, ' ' ORDER BY sw.word_index) AS line_text
+            string_agg(sw.appearance, ' ' ORDER BY sw.word_index) AS line_text
     FROM songs s
         JOIN song_words sw ON s.id = sw.song_id
         JOIN words w ON w.id = sw.word_id
@@ -60,7 +60,7 @@ ORDER BY l.song_id;
 
 async def get_song_words(song_id: int, conn: asyncpg.Connection) -> List[SongWord]:
     query = dedent("""
-SELECT words.word, song_words.verse_index, song_words.line_index, song_words.word_index
+SELECT song_words.appearance, song_words.verse_index, song_words.line_index, song_words.word_index
 FROM song_words
 INNER JOIN songs ON song_words.song_id = songs.id
 INNER JOIN artists ON songs.artist_id = artists.id
@@ -79,7 +79,7 @@ async def search_song(search_query: str, in_title: bool, in_lyrics: bool, in_art
     query = dedent("""
 WITH song_lyrics AS (
     SELECT
-        string_agg(words.word, ' ') AS lyrics,
+        string_agg(song_words.appearance, ' ') AS lyrics,
         song_words.song_id
     FROM song_words
     INNER JOIN words ON song_words.word_id = words.id

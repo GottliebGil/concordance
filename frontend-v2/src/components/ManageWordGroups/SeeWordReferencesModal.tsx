@@ -59,13 +59,14 @@ const SeeWordReferencesModal: React.FC = ({isModalOpen, onClose, word}: SeeWordR
                     {
                         wordPositions && (
                             <div className={'flex flex-col gap-4'}>
-                                {wordPositions.map(wordPosition => (
+                                {wordPositions.map((wordPosition, index) => (
                                     <ListItemText
+                                        key={index}
                                         primary={
                                             `${wordPosition.song_name} by ${wordPosition.artist_name}`
                                         }
                                         secondary={
-                                            `verse ${wordPosition.verse_index}, line: ${wordPosition.line_index}, word: ${wordPosition.word_index}`
+                                            `Written as "${wordPosition.appearance}" verse ${wordPosition.verse_index}, line: ${wordPosition.line_index}, word: ${wordPosition.word_index}`
                                         }
                                     />
                                 ))}

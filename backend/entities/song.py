@@ -1,10 +1,8 @@
-from typing import List
-
 from pydantic import BaseModel
 
 
 class SongWord(BaseModel):
-    word: str
+    appearance: str
     verse_index: int
     line_index: int
     word_index: int
@@ -13,7 +11,7 @@ class SongWord(BaseModel):
 class WordPosition(BaseModel):
     artist_name: str
     song_name: str
-    word: str
+    appearance: str
     verse_index: int
     line_index: int
     word_index: int

@@ -8,14 +8,14 @@ type Song = {
 type WordPosition = {
     song_name: string;
     artist_name: string;
-    word: string;
+    appearance: string;
     verse_index: number;
     line_index: number;
     word_index: number;
 }
 type SongWord = {
     id: number;
-    word: string;
+    appearance: string;
     verse_index: number;
     line_index: number;
     word_index: number;

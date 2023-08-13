@@ -6,10 +6,9 @@ import {useMemo} from "react";
 
 const useSongs = () => {
     const dispatch = useDispatch();
+    const searchOptions = useSelector((state) => state.songs.searchOptions);
+    const searchQuery = useMemo(() => searchOptions.query, [searchOptions]);
     const searchSongs = async () => {
-        const searchOptions = useSelector((state) => state.songs.searchOptions);
-        const searchQuery = useMemo(() => searchOptions.query, [searchOptions]);
-
         try {
             const response = await fetch(`http://localhost:8000/api/songs/search?` + new URLSearchParams({
                 "q": searchQuery,

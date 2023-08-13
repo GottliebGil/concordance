@@ -18,8 +18,8 @@ CREATE UNIQUE INDEX idx_song_name_artist_id ON songs (name, artist_id);
 
 CREATE TABLE words
 (
-    id   SERIAL PRIMARY KEY,
-    word TEXT NOT NULL UNIQUE
+    id        SERIAL PRIMARY KEY,
+    bare_word TEXT NOT NULL UNIQUE
 );
 
 -- Create song_words table to associate songs with their words
@@ -28,6 +28,7 @@ CREATE TABLE song_words
     id          SERIAL PRIMARY KEY,
     song_id     INTEGER REFERENCES songs (id) ON DELETE CASCADE,
     word_id     INTEGER REFERENCES words (id) ON DELETE CASCADE,
+    appearance  TEXT    NOT NULL, -- the way the word appears in that position
     verse_index INTEGER NOT NULL, -- which verse in the song
     line_index  INTEGER NOT NULL, -- which line of the song
     word_index  INTEGER NOT NULL  -- which word in the line
@@ -36,8 +37,8 @@ CREATE TABLE song_words
 -- Create word_groups table
 CREATE TABLE groups
 (
-    id         SERIAL PRIMARY KEY,
-    name       TEXT NOT NULL UNIQUE
+    id   SERIAL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE
 );
 
 -- Create word_group_assignments table to associate words with groups
@@ -49,7 +50,7 @@ CREATE TABLE word_group_assignments
 );
 
 CREATE UNIQUE INDEX idx_unique_word_group_assignments
-ON word_group_assignments(word_id, group_id);
+    ON word_group_assignments (word_id, group_id);
 
 CREATE OR REPLACE FUNCTION add_song(
     p_song_name TEXT,
@@ -67,6 +68,7 @@ DECLARE
     verse_index   INTEGER := 1; -- initialize verse counter
     line_content  TEXT;
     word_content  TEXT;
+    word_bare     TEXT;
 BEGIN
     -- Check if the artist already exists
     SELECT id INTO v_artist_id FROM artists WHERE name = p_artist_name;
@@ -93,13 +95,18 @@ BEGIN
             -- Process each word in the line
             FOR word_content IN SELECT regexp_split_to_table(line_content, E'\\s+')
                 LOOP
-                    INSERT INTO words (word)
-                    VALUES (word_content)
-                    ON CONFLICT (word) DO UPDATE SET word = word_content
+                    -- Extract the bare word (removing punctuation and converting to lowercase)
+                    word_bare = REGEXP_REPLACE(LOWER(word_content), '[^a-z0-9]', '', 'g');
+
+                    -- Insert the bare word into the words table
+                    INSERT INTO words (bare_word)
+                    VALUES (word_bare)
+                    ON CONFLICT (bare_word) DO UPDATE SET bare_word = word_bare
                     RETURNING id INTO word_id;
 
-                    INSERT INTO song_words (song_id, word_id, line_index, word_index, verse_index)
-                    VALUES (v_song_id, word_id, line_index, word_position, verse_index);
+                    -- Insert the exact appearance and associated word ID into song_words
+                    INSERT INTO song_words (song_id, word_id, line_index, word_index, verse_index, appearance)
+                    VALUES (v_song_id, word_id, line_index, word_position, verse_index, word_content);
                     word_position := word_position + 1;
                 END LOOP;
             line_index := line_index + 1; -- move to next line

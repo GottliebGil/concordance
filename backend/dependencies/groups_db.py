@@ -7,7 +7,7 @@ from entities.groups import Group
 async def fetch_groups(conn: asyncpg.Connection) -> List[Group]:
     rows = await conn.fetch(
         dedent('''
-            SELECT g.id AS group_id, g.name AS group_name, array_agg(w.word) AS words
+            SELECT g.id AS group_id, g.name AS group_name, array_agg(w.bare_word) AS words
             FROM groups g
             LEFT JOIN word_group_assignments gw ON g.id = gw.group_id
             LEFT JOIN words w ON gw.word_id = w.id
@@ -22,7 +22,7 @@ async def fetch_groups(conn: asyncpg.Connection) -> List[Group]:
 async def get_words_in_group(group_id: int, conn: asyncpg.Connection) -> List[str]:
     rows = await conn.fetch(
         dedent('''
-            SELECT w.word
+            SELECT w.bare_word
             FROM groups g
             LEFT JOIN word_group_assignments gw ON g.id = gw.group_id
             LEFT JOIN words w ON gw.word_id = w.id
@@ -30,7 +30,7 @@ async def get_words_in_group(group_id: int, conn: asyncpg.Connection) -> List[st
         '''), group_id
     )
 
-    return [row['word'] for row in rows]
+    return [row['bare_word'] for row in rows]
 
 
 async def get_words_not_in_group(group_id: int, conn: asyncpg.Connection) -> List[str]:
@@ -42,14 +42,14 @@ async def get_words_not_in_group(group_id: int, conn: asyncpg.Connection) -> Lis
                 LEFT JOIN words w ON gw.word_id = w.id
                 WHERE g.id = $1
             )
-            SELECT words.word
+            SELECT words.bare_word
             FROM words
             LEFT JOIN words_in_group ON words.id = words_in_group.id
             WHERE words_in_group.id IS NULL
         '''), group_id
     )
 
-    return [row['word'] for row in rows]
+    return [row['bare_word'] for row in rows]
 
 
 async def create_new_group(group_name: str, conn: asyncpg.Connection) -> int:
@@ -61,10 +61,10 @@ async def create_new_group(group_name: str, conn: asyncpg.Connection) -> int:
 
 
 async def add_word_to_specific_group(group_id: int, word: str, conn: asyncpg.Connection) -> int:
-    response = await conn.fetch("SELECT id FROM words WHERE word = $1", word)
+    response = await conn.fetch("SELECT id FROM words WHERE bare_word = $1", word)
     if not response:
         response = await conn.fetchval(
-            'INSERT INTO words (word) VALUES ($1) RETURNING id',
+            'INSERT INTO words (bare_word) VALUES ($1) RETURNING id',
             word
         )
     word_id = response[0]['id']
