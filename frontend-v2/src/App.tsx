@@ -9,10 +9,11 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import store from "./store/store";
 import {Provider} from "react-redux";
+import ManageWordGroups from "./components/ManageWordGroups";
 
 
 const App: React.FC = () => {
-    const [currentTab, setCurrentTab] = useState<Number>(1);
+    const [currentTab, setCurrentTab] = useState<Number>(2);
     return (
         <Provider store={store}>
             <div className="flex flex-col gap-4">
@@ -30,6 +31,9 @@ const App: React.FC = () => {
                             <div className={'cursor-pointer'} onClick={() => setCurrentTab(1)}>
                                 Search for songs
                             </div>
+                            <div className={'cursor-pointer'} onClick={() => setCurrentTab(2)}>
+                                Manage groups
+                            </div>
                         </div>
                     ) || (
                         <div className={'flex flex-col gap-2'}>
@@ -44,6 +48,9 @@ const App: React.FC = () => {
                             }
                             {
                                 currentTab == 1 && <SearchSongs/>
+                            }
+                            {
+                                currentTab == 2 && <ManageWordGroups/>
                             }
                         </div>
                     )

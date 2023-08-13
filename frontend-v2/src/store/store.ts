@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import songsReducer from './songsSlice';
+import groupsReducer from './groupsSlice';
 
 const store = configureStore({
   reducer: {
-    songs: songsReducer
+    songs: songsReducer,
+    groups: groupsReducer
   }
 });
 

@@ -44,7 +44,7 @@ async def search_songs(
         in_artist_name: bool = True,
         conn: asyncpg.Connection = Depends(database.get_database_connection)
 ):
-    songs = await crud.search_song(q, in_title, in_lyrics, in_artist_name, conn)
+    songs = await songs_db.search_song(q, in_title, in_lyrics, in_artist_name, conn)
     return songs
 
 
@@ -52,7 +52,7 @@ async def search_songs(
 async def get_all_songs(
         conn: asyncpg.Connection = Depends(database.get_database_connection)
 ):
-    songs = await crud.get_all_songs(conn)
+    songs = await songs_db.get_all_songs(conn)
     return songs
 
 
@@ -61,7 +61,7 @@ async def get_song_words(
         song_id: int,
         conn: asyncpg.Connection = Depends(database.get_database_connection)
 ):
-    words = await crud.get_song_words(song_id, conn)
+    words = await songs_db.get_song_words(song_id, conn)
     words_to_verses = []
     current_verse = []
     current_line = []

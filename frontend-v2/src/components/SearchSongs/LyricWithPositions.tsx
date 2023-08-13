@@ -20,20 +20,23 @@ const LyricsWithPositions: React.FC = ({songWords}: LyricsWithPositionsProps) =>
     return (
         <div className={'flex flex-col gap-2'}>
             {songWords.map((verse, index) => (
-                <div key={index} className={'flex flex-col gap-0'}>
+                <div key={`verse-${index}`} className={'flex flex-col gap-0'}>
                     {
                         verse.map((line, index) => (
-                            <div key={index} className={'flex flex-row flex-wrap gap-1'}>
+                            <div key={`line-${index}`} className={'flex flex-row flex-wrap gap-1'}>
                                 {
-                                    line.map((word, index) => (
-                                        <Tooltip
-                                            title={`Verse ${word.verse_index}, Line ${word.line_index}, Word ${word.word_index}`}>
+                                    line.map(word => (
+                                        <span
+                                            key={`Verse ${word.verse_index}, Line ${word.line_index}, Word ${word.word_index}`}>
+                                            <Tooltip
+                                                title={`Verse ${word.verse_index}, Line ${word.line_index}, Word ${word.word_index}`}>
                                             <span
-                                                key={`Verse ${word.verse_index}, Line ${word.line_index}, Word ${word.word_index}`}
                                                 className={`hover:text-slate-400 ${getBackground(word.line_index, word.word_index)}`}>
                                                 {word.word}
                                             </span>
                                         </Tooltip>
+                                        </span>
+
                                     ))
                                 }
                             </div>

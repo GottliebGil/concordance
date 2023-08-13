@@ -12,22 +12,41 @@ const PositionInASong: React.FC = () => {
     const {searchValue} = useContext(SearchContext);
 
     useMemo(async () => {
-        await dispatch(
-            setSearchPosition(
-                {lineIndex: parseInt(lineIndex), wordIndex: parseInt(wordIndex)}
-            )
-        );
+
     }, [lineIndex, wordIndex]);
+
+    const dispatchNewSearchPositions = async (line: string, word: string) => {
+        if (line && word) {
+            await dispatch(
+                setSearchPosition(
+                    {lineIndex: parseInt(line), wordIndex: parseInt(word)}
+                )
+            );
+        } else {
+            await dispatch(
+                setSearchPosition(
+                    {lineIndex: null, wordIndex: null}
+                )
+            );
+        }
+    }
+
     return (
         <div className={'flex flex-row items-baseline gap-2'}>
             <TextField label={"Line index"} variant={"standard"} value={lineIndex}
-                       disabled={searchValue}
+                       disabled={Boolean(searchValue)}
                        type={'number'}
-                       onChange={(e) => setLineIndex(e.target.value)}/>
+                       onChange={async (e) => {
+                           await setLineIndex(e.target.value);
+                           await dispatchNewSearchPositions(e.target.value, wordIndex)
+                       }}/>
             <TextField label={"Word index"} variant={"standard"} value={wordIndex}
-                       disabled={searchValue}
+                       disabled={Boolean(searchValue)}
                        type={'number'}
-                       onChange={(e) => setWordIndex(e.target.value)}/>
+                       onChange={async (e) => {
+                           await setWordIndex(e.target.value);
+                           await dispatchNewSearchPositions(lineIndex, e.target.value)
+                       }}/>
         </div>
     )
 };
