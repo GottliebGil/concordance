@@ -19,7 +19,8 @@ function UploadSong() {
                 const response = await fetch("http://localhost:8000/api/songs/add", {
                     method: 'POST',
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        'cache-control': 'no-cache'
                     },
                     body: JSON.stringify({
                         "song_name": songName,

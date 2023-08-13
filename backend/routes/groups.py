@@ -25,6 +25,28 @@ async def create_group(
     return {"id": group_id, "name": group.name, "words": []}
 
 
+@router.get("/{group_id}/words/")
+async def get_group_words(
+        group_id: int,
+        conn: asyncpg.Connection = Depends(database.get_database_connection)
+):
+    words = await groups_db.get_words_in_group(group_id, conn)
+    if not words:
+        raise HTTPException(status_code=400, detail="Unable to add word to group.")
+    return words if words[0] else []
+
+
+@router.get("/{group_id}/words/new")
+async def get_words_not_in_the_group(
+        group_id: int,
+        conn: asyncpg.Connection = Depends(database.get_database_connection)
+):
+    words = await groups_db.get_words_not_in_group(group_id, conn)
+    if not words:
+        raise HTTPException(status_code=400, detail="Unable to add word to group.")
+    return words if words[0] else []
+
+
 @router.post("/{group_id}/words/")
 async def add_word_to_group(
         group_id: int,

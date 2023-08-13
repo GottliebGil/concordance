@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
     Button,
@@ -17,11 +17,11 @@ const ManageWordGroups: React.FC = () => {
     const dispatch = useDispatch();
     const [groupInModal, setGroupInModal] = useState<Group | undefined>(undefined);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const {getGroups} = useGroups()
+    const {getGroups} = useGroups();
 
-    const _onClickGetGroups = async () => {
-        await getGroups();
-    }
+    useEffect(() => {
+        getGroups();
+    }, [])
 
     const openModal = async (group: Group) => {
         await setGroupInModal(group);
@@ -38,10 +38,6 @@ const ManageWordGroups: React.FC = () => {
             <Typography variant={"h6"} component={"h2"}>
                 Groups Management Page
             </Typography>
-            <Button variant={"contained"} type={"submit"} onClick={_onClickGetGroups}
-                    disabled={isLoading}>
-                Get Groups
-            </Button>
             <Typography variant={"h6"} component={"h3"}>
                 Groups
             </Typography>
