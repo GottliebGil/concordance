@@ -2,11 +2,13 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from routes import song_routes
+from routes import songs as songs_routes
+from routes import groups as groups_routes
 
 app = FastAPI()
 
-app.include_router(song_routes.router, prefix="/api/songs")
+app.include_router(songs_routes.router, prefix="/api/songs")
+app.include_router(groups_routes.router, prefix="/api/groups")
 
 app.add_middleware(
     CORSMiddleware,

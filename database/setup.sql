@@ -37,7 +37,7 @@ CREATE TABLE song_words
 CREATE TABLE groups
 (
     id         SERIAL PRIMARY KEY,
-    group_name TEXT NOT NULL UNIQUE
+    name       TEXT NOT NULL UNIQUE
 );
 
 -- Create word_group_assignments table to associate words with groups
@@ -47,6 +47,9 @@ CREATE TABLE word_group_assignments
     word_id  INTEGER REFERENCES words (id) ON DELETE CASCADE,
     group_id INTEGER REFERENCES groups (id) ON DELETE CASCADE
 );
+
+CREATE UNIQUE INDEX idx_unique_word_group_assignments
+ON word_group_assignments(word_id, group_id);
 
 CREATE OR REPLACE FUNCTION add_song(
     p_song_name TEXT,

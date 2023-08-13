@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 import asyncpg
 from pydantic import BaseModel
 
-from dependencies import crud
+from dependencies import songs_db
 import database
 
 router = APIRouter()
@@ -30,7 +30,7 @@ async def add_song(
             status_code=400,
             detail="If the song and artist names aren't passed, the file format must be 'ARTIST_NAME - SONG_NAME'"
         )
-    await crud.add_song(
+    await songs_db.add_song(
         request.song_name, request.artist_name, request.content, conn
     )
     return {"message": "Song added successfully!"}
