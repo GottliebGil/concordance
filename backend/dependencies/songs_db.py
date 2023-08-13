@@ -3,7 +3,7 @@ from typing import Optional, List
 
 import asyncpg
 
-from entities.song import Song, Word
+from entities.song import Song, SongWord
 
 
 async def add_song(song_name: str, artist_name: str, content: str,
@@ -58,7 +58,7 @@ ORDER BY l.song_id;
     return result[0]['lyrics']
 
 
-async def get_song_words(song_id: int, conn: asyncpg.Connection) -> List[Word]:
+async def get_song_words(song_id: int, conn: asyncpg.Connection) -> List[SongWord]:
     query = dedent("""
 SELECT words.word, song_words.verse_index, song_words.line_index, song_words.word_index
 FROM song_words
@@ -71,7 +71,7 @@ ORDER BY song_words.verse_index, song_words.line_index, song_words.word_index;
     result = await conn.fetch(query, song_id)
     if not result:
         return []
-    return [Word(**row) for row in result]
+    return [SongWord(**row) for row in result]
 
 
 async def search_song(search_query: str, in_title: bool, in_lyrics: bool, in_artist_name: bool,
