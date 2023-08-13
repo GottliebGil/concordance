@@ -25,6 +25,15 @@ async def create_group(
     return {"id": group_id, "name": group.name, "words": []}
 
 
+@router.delete("/{group_id}")
+async def delete_group(
+        group_id: int,
+        conn: asyncpg.Connection = Depends(database.get_database_connection)
+):
+    await groups_db.delete_group(group_id, conn)
+    return {}
+
+
 @router.get("/{group_id}/words/")
 async def get_group_words(
         group_id: int,

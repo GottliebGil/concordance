@@ -87,7 +87,7 @@ const ManageGroupModal: React.FC = ({isModalOpen, onClose, group}: ManageGroupMo
             <Box sx={style} className={'flex flex-col gap-4'}>
                 <div className={'flex flex-col gap-2 overflow-scroll h-full'}>
                     <Typography variant={"h6"} component={"h2"}>
-                        {group.name}
+                        {group.name} (ID: {group.id})
                     </Typography>
                     <Typography variant={"h6"} component={"h3"}>
                         Add new word

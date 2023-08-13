@@ -60,6 +60,11 @@ async def create_new_group(group_name: str, conn: asyncpg.Connection) -> int:
     return group_id
 
 
+async def delete_group(group_id: int, conn: asyncpg.Connection):
+    await conn.execute("DELETE FROM word_group_assignments WHERE group_id = $1", group_id)
+    await conn.execute("DELETE FROM groups WHERE id = $1", group_id)
+
+
 async def add_word_to_specific_group(group_id: int, word: str, conn: asyncpg.Connection) -> int:
     response = await conn.fetch("SELECT id FROM words WHERE bare_word = $1", word)
     if not response:

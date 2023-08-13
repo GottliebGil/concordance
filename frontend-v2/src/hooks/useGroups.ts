@@ -67,13 +67,23 @@ const useGroups = () => {
         });
     }
 
+    const deleteGroup = async (groupId: number) => {
+        await fetch(`http://localhost:8000/api/groups/${groupId}`, {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+    }
+
     return {
         getGroups,
         getGroupWords,
         getWordsNotInGroup,
         removeWordFromGroup,
         addWordToGroup,
-        createGroup
+        createGroup,
+        deleteGroup
     }
 }
 
