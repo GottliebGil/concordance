@@ -13,7 +13,7 @@ import ManageWordGroups from "./components/ManageWordGroups";
 
 
 const App: React.FC = () => {
-    const [currentTab, setCurrentTab] = useState<Number>(2);
+    const [currentTab, setCurrentTab] = useState<Number>(3);
     return (
         <Provider store={store}>
             <div className="flex flex-col gap-4">
@@ -34,6 +34,9 @@ const App: React.FC = () => {
                             <div className={'cursor-pointer'} onClick={() => setCurrentTab(2)}>
                                 Manage groups
                             </div>
+                            <div className={'cursor-pointer'} onClick={() => setCurrentTab(3)}>
+                                Word Statistics
+                            </div>
                         </div>
                     ) || (
                         <div className={'flex flex-col gap-2'}>
@@ -51,6 +54,9 @@ const App: React.FC = () => {
                             }
                             {
                                 currentTab == 2 && <ManageWordGroups/>
+                            }
+                            {
+                                currentTab == 3 && <div>TBD</div>
                             }
                         </div>
                     )
