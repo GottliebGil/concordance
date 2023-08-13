@@ -27,7 +27,7 @@ const ManageGroupModal: React.FC = ({isModalOpen, onClose, group}: ManageGroupMo
     const [wordsToAdd, setWordsToAdd] = useState<string[]>([]);
     const [isLoadingWords, setIsLoadingWords] = useState<boolean>(true);
     const [isLoadingWordsToAdd, setIsLoadingWordsToAdd] = useState<boolean>(true);
-    const [newWordToAdd, setNewWordToAdd] = useState<string>('');
+    const [newWordToAdd, setNewWordToAdd] = useState<string | undefined>('');
     const style = {
         position: 'absolute' as 'absolute',
         top: '50%',
@@ -49,7 +49,7 @@ const ManageGroupModal: React.FC = ({isModalOpen, onClose, group}: ManageGroupMo
         setWordsToAdd(wordsNotInGroup);
         setIsLoadingWords(false);
         setIsLoadingWordsToAdd(false);
-        setNewWordToAdd('');
+        setNewWordToAdd(undefined);
     }
     useEffect(() => {
         _reloadPage();
