@@ -1,4 +1,4 @@
-import React, {useMemo} from "react";
+import React, {useEffect, useMemo} from "react";
 import {Button, Checkbox, FormControlLabel, TextField} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import {setIsSearching, setSearchOptions, setSongs} from "../../store/songsSlice";
@@ -22,10 +22,11 @@ const SearchBar: React.FC = () => {
     };
     const handleGetAllSongs = async (e) => {
         await setSearchMode(e)
-        await getAllSongs()
+        await getAllSongs();
     }
 
     const _setSearchOptions = async (value) => dispatch(setSearchOptions(value));
+
 
     return (
         <form className={'flex flex-col gap-2'}>
