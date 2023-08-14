@@ -10,6 +10,7 @@ import '@fontsource/roboto/700.css';
 import store from "./store/store";
 import {Provider} from "react-redux";
 import ManageWordGroups from "./components/ManageWordGroups";
+import WordStatistics from "./components/WordStatistics/WordStatistics";
 
 
 const App: React.FC = () => {
@@ -56,7 +57,7 @@ const App: React.FC = () => {
                                 currentTab == 2 && <ManageWordGroups/>
                             }
                             {
-                                currentTab == 3 && <div>TBD</div>
+                                currentTab == 3 && <WordStatistics />
                             }
                         </div>
                     )
