@@ -31,28 +31,24 @@ const MainPage: React.FC = () => {
         },
     ]
     return (
-        <div>
-            <div>Select which action you'd like to take:</div>
-            <div className={'grid grid-cols-2 grid-rows-2 gap-4'}>
-                {
-                    pages.map((page, index) => (
-                        <Card variant={'outlined'} sx={{width: 275}}>
-                            <CardContent>
-                                <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
-                                    {page.overhead}
-                                </Typography>
-                                <Typography variant="h5" component="div">
-                                    {page.title}
-                                </Typography>
-                            </CardContent>
-                            <CardActions>
-                                <Button size="small" onClick={() => _onPageSelected(index)}>Go</Button>
-                            </CardActions>
-                        </Card>
-                    ))
-                }
-            </div>
-
+        <div className={'grid grid-cols-2 grid-rows-2 gap-4 justify-items-center'}>
+            {
+                pages.map((page, index) => (
+                    <Card variant={'outlined'} sx={{width: 275}}>
+                        <CardContent>
+                            <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
+                                {page.overhead}
+                            </Typography>
+                            <Typography variant="h5" component="div">
+                                {page.title}
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small" onClick={() => _onPageSelected(index)}>Go</Button>
+                        </CardActions>
+                    </Card>
+                ))
+            }
         </div>
     )
 }
