@@ -30,6 +30,11 @@ async def add_song(
             status_code=400,
             detail="If the song and artist names aren't passed, the file format must be 'ARTIST_NAME - SONG_NAME'"
         )
+    if songs_db.get_song(request.artist_name, request.song_name, conn):
+        raise HTTPException(
+            status_code=400,
+            detail="A song with the same name already exists"
+        )
     await songs_db.add_song(
         request.song_name, request.artist_name, request.content, conn
     )

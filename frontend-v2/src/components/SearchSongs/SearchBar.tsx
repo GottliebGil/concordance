@@ -25,6 +25,15 @@ const SearchBar: React.FC = () => {
         await getAllSongs();
     }
 
+    useEffect(() => {
+        const fetchAll = async () => {
+            await dispatch(setIsSearching(true));
+            dispatch(setSongs([]));
+            await getAllSongs()
+        }
+        fetchAll();
+    }, [])
+
     const _setSearchOptions = async (value) => dispatch(setSearchOptions(value));
 
 

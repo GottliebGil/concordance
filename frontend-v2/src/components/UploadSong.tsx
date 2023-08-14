@@ -1,19 +1,33 @@
 // src/components/UploadSong.tsx
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
+import {MuiFileInput} from 'mui-file-input'
+import input from "./infrastructure/Input";
+import {Button, TextField} from "@mui/material";
 
 function UploadSong() {
-    const [files, setFiles] = useState<FileList>([]);
+    const [files, setFiles] = useState<File[]>([]);
     const [songName, setSongName] = useState<String>("");
     const [artistName, setArtistName] = useState<String>("");
+    const [errors, setErrors] = useState<string[]>([]);
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const uploadedFiles = event.target.files || [];
-        setFiles(uploadedFiles);
+    const hasManyFiles = useMemo(() => files.length > 0, [files]);
+
+    const handleFileChange = (newFiles) => {
+        for (const file of newFiles) {
+            const splitFileName = file.name.split(' - ');
+            if (splitFileName.length != 2) {
+                setErrors(["Every selected file name must be of the format ARTIST_NAME - SONG_NAME"]);
+                setFiles([]);
+                return;
+            }
+        }
+        setFiles(newFiles);
+        setErrors([]);
     };
 
     const _doUpload = async (file) => {
         const fileContent = await file.text();
-        await fetch("http://localhost:8000/api/songs/add", {
+        return await fetch("http://localhost:8000/api/songs/add", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -26,27 +40,44 @@ function UploadSong() {
                 "file_name": file.name
             })
         });
+
     }
 
     const handleUpload = async () => {
+        const errorsInUpload = []
         for (const file of files) {
             try {
-                await _doUpload(file);
-            }
-            catch (e) {
-                console.log('Failed uploading');
+                const response = await _doUpload(file);
+                const parsedResponse = await response.json()
+                if (response.status === 400) {
+                    errorsInUpload.push(`${file.name}: ${parsedResponse.detail}`)
+                }
+            } catch (e) {
+                errorsInUpload.push(`${file.name}: Unknown error`)
             }
         }
+        setErrors(errorsInUpload);
     };
 
     return (
         <div className={"flex flex-col gap-2"}>
             <div className={"text-xl"}>Upload new song</div>
             <div className={"flex flex-col gap-4"}>
-                <input type="file" onChange={handleFileChange} multiple/>
-                <input type="text" placeholder={"Artist name"} onChange={(e) => setArtistName(e.target.value)}/>
-                <input type="text" placeholder={"Song name"} onChange={(e) => setSongName(e.target.value)}/>
-                <button onClick={handleUpload}>Upload</button>
+                <div>Click the button below and select the lyrics.</div>
+                <MuiFileInput value={files} onChange={handleFileChange} multiple/>
+                <div className={'flex flex-col items-center'}>
+                    <Button
+                        variant='contained'
+                        disabled={files.length === 0}
+                        onClick={handleUpload}>Upload</Button>
+                </div>
+                {
+                    errors && (
+                        <div className={'flex flex-col gap-1 text-red-400'}>{errors.map((error, index) => (
+                            <div>{error}</div>
+                        ))}</div>
+                    )
+                }
             </div>
         </div>
     );

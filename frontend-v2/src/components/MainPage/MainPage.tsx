@@ -34,7 +34,7 @@ const MainPage: React.FC = () => {
         <div className={'grid grid-cols-2 grid-rows-2 gap-4 justify-items-center'}>
             {
                 pages.map((page, index) => (
-                    <Card variant={'outlined'} sx={{width: 275}}>
+                    <Card key={index} variant={'outlined'} sx={{width: 275}}>
                         <CardContent>
                             <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
                                 {page.overhead}

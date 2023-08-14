@@ -145,3 +145,22 @@ INNER JOIN artists ON songs.artist_id = artists.id
             content=await get_song_lyrics(row['artist_name'], row['name'], conn)
         ) for row in results
     ]
+
+
+async def get_song(artist_name: str, song_name: str, conn: asyncpg.Connection):
+    query = dedent("""
+SELECT
+    songs.id,
+    artists.name AS artist_name,
+    songs.name
+FROM songs
+INNER JOIN artists ON songs.artist_id = artists.id
+WHERE artists.name = $1 AND songs.name = $2
+    """)
+    row = await conn.fetchrow(query, artist_name, song_name)
+    return Song(
+        id=row['id'],
+        name=row['name'],
+        artist_name=row['artist_name'],
+        content=await get_song_lyrics(row['artist_name'], row['name'], conn)
+    )
