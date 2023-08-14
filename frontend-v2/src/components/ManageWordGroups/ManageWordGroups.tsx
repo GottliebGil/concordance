@@ -83,7 +83,7 @@ const ManageWordGroups: React.FC = () => {
                                             onClick={() => onDeleteGroup(group.id)}>
                                     <DeleteIcon/>
                                 </IconButton>
-                            }>
+                            } key={index}>
                                 <ListItemButton key={index} onClick={() => openModal(group)}>
                                     <ListItemText primary={group.name}/>
                                 </ListItemButton>
