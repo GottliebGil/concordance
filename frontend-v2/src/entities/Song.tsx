@@ -16,6 +16,7 @@ type WordPosition = {
 type SongWord = {
     id: number;
     appearance: string;
+    bare_word: string;
     verse_index: number;
     line_index: number;
     word_index: number;

@@ -60,7 +60,7 @@ ORDER BY l.song_id;
 
 async def get_song_words(song_id: int, conn: asyncpg.Connection) -> List[SongWord]:
     query = dedent("""
-SELECT song_words.appearance, song_words.verse_index, song_words.line_index, song_words.word_index
+SELECT song_words.appearance, words.bare_word, song_words.verse_index, song_words.line_index, song_words.word_index
 FROM song_words
 INNER JOIN songs ON song_words.song_id = songs.id
 INNER JOIN artists ON songs.artist_id = artists.id

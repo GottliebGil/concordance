@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class SongWord(BaseModel):
     appearance: str
+    bare_word: str
     verse_index: int
     line_index: int
     word_index: int
