@@ -5,12 +5,14 @@ from starlette.middleware.cors import CORSMiddleware
 from routes import songs as songs_routes
 from routes import groups as groups_routes
 from routes import words as words_routes
+from routes import stats as stats_routes
 
 app = FastAPI()
 
 app.include_router(songs_routes.router, prefix="/api/songs")
 app.include_router(groups_routes.router, prefix="/api/groups")
 app.include_router(words_routes.router, prefix="/api/words")
+app.include_router(stats_routes.router, prefix="/api/stats")
 
 app.add_middleware(
     CORSMiddleware,
