@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo} from "react";
-import {Button, Checkbox, FormControlLabel, TextField} from "@mui/material";
+import {Button, ButtonGroup, Checkbox, FormControlLabel, TextField} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import {setIsSearching, setSearchOptions, setSongs} from "../../store/songsSlice";
 import useSongs from "../../hooks/useSongs";
@@ -36,16 +36,12 @@ const SearchBar: React.FC = () => {
 
     const _setSearchOptions = async (value) => dispatch(setSearchOptions(value));
 
-
     return (
         <form className={'flex flex-col gap-2'}>
             <div className={"flex flex-row gap-2"}>
                 <TextField label={"Search songs"} variant={"outlined"} value={searchQuery}
                            disabled={isSearching}
                            onChange={(e) => _setSearchOptions({...searchOptions, query: e.target.value})}/>
-                <Button variant={"contained"} type={"submit"} onClick={handleSearch}
-                        disabled={isSearching}>Search
-                </Button>
                 <div>
                     <FormControlLabel control={
                         <Checkbox checked={searchOptions.inTitle}
@@ -76,12 +72,14 @@ const SearchBar: React.FC = () => {
                     } label="Lyrics"/>
                 </div>
             </div>
-            <div className={'font-bold'}>Or:</div>
-            <div>
-                <Button variant={"outlined"} onClick={handleGetAllSongs} disabled={isSearching}>
+            <ButtonGroup>
+                <Button variant={"contained"} onClick={handleGetAllSongs} disabled={isSearching}>
                     Get all songs
                 </Button>
-            </div>
+                <Button variant={"contained"} type={"submit"} onClick={handleSearch}
+                        disabled={isSearching || !searchQuery}>Search
+                </Button>
+            </ButtonGroup>
         </form>
     )
 };

@@ -13,16 +13,17 @@ import ManageWordGroups from "./components/ManageWordGroups";
 import WordStatistics from "./components/WordStatistics/WordStatistics";
 import MainPage from "./components/MainPage";
 import {setCurrentPage} from "./store/appSlice";
-import {AppBar, Box, IconButton, Toolbar} from "@mui/material";
+import {AppBar, Box, IconButton, Paper, Toolbar} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HomeIcon from '@mui/icons-material/Home';
+
 
 const App: React.FC = () => {
     const currentPage = useSelector((state) => state.app.currentPage);
     const dispatch = useDispatch();
     const goBack = async () => await dispatch(setCurrentPage(-1));
     return (
-        <div className="flex flex-col gap-4">
+        <div className={`flex flex-col gap-4`}>
             <AppBar position={'static'}>
                 <Toolbar>
                     <IconButton onClick={goBack} size='large' edge='start' disabled={currentPage === -1}>
@@ -36,22 +37,25 @@ const App: React.FC = () => {
             </div>
             {
                 (currentPage == -1 && <MainPage/>) || (
-                    <div className={'items-center'}>
-                        <div className={'flex flex-col gap-2 max-w-800 margin-auto'}>
-                            {
-                                currentPage == 0 && <UploadSong/>
-                            }
-                            {
-                                currentPage == 1 && <SearchSongs/>
-                            }
-                            {
-                                currentPage == 2 && <ManageWordGroups/>
-                            }
-                            {
-                                currentPage == 3 && <WordStatistics/>
-                            }
+                    <Paper>
+                        <div className={'flex flex-col items-center'}>
+                            <div className={'flex flex-col gap-2 max-w-800'}>
+                                {
+                                    currentPage == 0 && <UploadSong/>
+                                }
+                                {
+                                    currentPage == 1 && <SearchSongs/>
+                                }
+                                {
+                                    currentPage == 2 && <ManageWordGroups/>
+                                }
+                                {
+                                    currentPage == 3 && <WordStatistics/>
+                                }
+                            </div>
                         </div>
-                    </div>
+                    </Paper>
+
                 )
             }
         </div>
