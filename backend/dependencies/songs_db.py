@@ -158,6 +158,8 @@ INNER JOIN artists ON songs.artist_id = artists.id
 WHERE artists.name = $1 AND songs.name = $2
     """)
     row = await conn.fetchrow(query, artist_name, song_name)
+    if not row:
+        return
     return Song(
         id=row['id'],
         name=row['name'],
