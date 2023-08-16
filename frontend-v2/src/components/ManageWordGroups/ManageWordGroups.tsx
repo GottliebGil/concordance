@@ -55,16 +55,18 @@ const ManageWordGroups: React.FC = () => {
             <Typography variant={"h6"} component={"h3"}>
                 Create new group
             </Typography>
-            <div>
+            <form className={'flex flex-col gap-2 justify-items-center'}>
                 <TextField label={"Group name"} variant={"standard"} value={newGroupName}
                            onChange={async (e) => {
                                await setNewGroupName(e.target.value);
                            }}/>
                 <Button
+                    type={'submit'}
+                    variant={'contained'}
                     disabled={!newGroupName}
                     onClick={onCreateNewGroup}>Create
                 </Button>
-            </div>
+            </form>
             <Typography variant={"h6"} component={"h3"}>
                 Groups
             </Typography>

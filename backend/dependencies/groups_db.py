@@ -81,7 +81,7 @@ async def add_word_to_specific_group(group_id: int, word: str, conn: asyncpg.Con
 
 
 async def remove_word_from_specific_group(group_id: int, word: str, conn: asyncpg.Connection) -> bool:
-    response = await conn.fetch("SELECT id FROM words WHERE word = $1", word)
+    response = await conn.fetch("SELECT id FROM words WHERE bare_word = $1", word)
     if not response:
         return False
     result = await conn.execute(

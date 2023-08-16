@@ -4,7 +4,7 @@ import {createSlice} from '@reduxjs/toolkit';
 export const appSlice = createSlice({
     name: 'app',
     initialState: {
-        currentPage: 1
+        currentPage: -1
     },
     reducers: {
         setCurrentPage: (state, action) => {

@@ -21,6 +21,7 @@ const SearchBar: React.FC = () => {
         await searchSongs();
     };
     const handleGetAllSongs = async (e) => {
+        await _setSearchOptions({...searchOptions, query: ''})
         await setSearchMode(e)
         await getAllSongs();
     }
