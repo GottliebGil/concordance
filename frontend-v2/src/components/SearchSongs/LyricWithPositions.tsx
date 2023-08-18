@@ -74,7 +74,7 @@ const LyricsWithPositions: React.FC = ({songWords}: LyricsWithPositionsProps) =>
                 wordToSeeReferences && <SeeWordReferencesModal
                     isModalOpen={isReferencesModalOpen}
                     onClose={closeModal}
-                    word={wordToSeeReferences}/>
+                    words={[wordToSeeReferences]}/>
             }
         </div>
     )

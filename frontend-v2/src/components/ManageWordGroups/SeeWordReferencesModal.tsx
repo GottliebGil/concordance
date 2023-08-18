@@ -18,15 +18,16 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import useGroups from "../../hooks/useGroups";
 import useWords from "../../hooks/useWords";
 import {WordPosition} from "../../entities/Song";
+import {Dictionary} from "@reduxjs/toolkit";
 
 type SeeWordReferencesModalProps = {
     isModalOpen: boolean;
     onClose: CallableFunction;
-    word: string;
+    words: string[];
 }
 
-const SeeWordReferencesModal: React.FC = ({isModalOpen, onClose, word}: SeeWordReferencesModalProps) => {
-    const [wordPositions, setWordPositions] = useState<WordPosition[]>([]);
+const SeeWordReferencesModal: React.FC = ({isModalOpen, onClose, words}: SeeWordReferencesModalProps) => {
+    const [wordsPositions, setWordsPositions] = useState<Dictionary<string, WordPosition[]>>({});
     const style = {
         position: 'absolute' as 'absolute',
         top: '50%',
@@ -41,37 +42,42 @@ const SeeWordReferencesModal: React.FC = ({isModalOpen, onClose, word}: SeeWordR
     };
     const {getWordPositions} = useWords();
     useEffect(() => {
-        getWordPositions(word).then(result => {
-            setWordPositions(result);
+        getWordPositions(words).then(result => {
+            setWordsPositions(result);
         })
-    }, [])
+    }, []);
 
     return (
         <Modal
             open={isModalOpen}
             onClose={onClose}>
             <Box sx={style} className={'flex flex-col gap-4'}>
-                <div className={'flex flex-col gap-2 overflow-scroll h-full'}>
-                    <Typography variant={"h6"} component={"h2"}>
-                        References for {word}
-                    </Typography>
-
+                <div className={'flex flex-col gap-10 overflow-scroll h-full'}>
                     {
-                        wordPositions && (
-                            <div className={'flex flex-col gap-4'}>
-                                {wordPositions.map((wordPosition, index) => (
-                                    <ListItemText
-                                        key={index}
-                                        primary={
-                                            `${wordPosition.song_name} by ${wordPosition.artist_name}`
-                                        }
-                                        secondary={
-                                            `Written as "${wordPosition.appearance}" verse ${wordPosition.verse_index}, line: ${wordPosition.line_index}, word: ${wordPosition.word_index}`
-                                        }
-                                    />
-                                ))}
+                        words.map((word, index) => (
+                            <div key={index} className={'flex flex-col gap-2'}>
+                                <Typography variant={"h6"} component={"h2"}>
+                                    References for {word}
+                                </Typography>
+                                {
+                                    wordsPositions && wordsPositions[word] && (
+                                        <div className={'flex flex-col gap-4'}>
+                                            {wordsPositions[word].map((wordPosition, index) => (
+                                                <ListItemText
+                                                    key={index}
+                                                    primary={
+                                                        `${wordPosition.song_name} by ${wordPosition.artist_name}`
+                                                    }
+                                                    secondary={
+                                                        `Written as "${wordPosition.appearance}" verse ${wordPosition.verse_index}, line: ${wordPosition.line_index}, word: ${wordPosition.word_index}`
+                                                    }
+                                                />
+                                            ))}
+                                        </div>
+                                    )
+                                }
                             </div>
-                        )
+                        ))
                     }
                 </div>
             </Box>

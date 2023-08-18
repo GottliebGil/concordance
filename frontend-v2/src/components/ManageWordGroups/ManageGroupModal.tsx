@@ -31,7 +31,7 @@ const ManageGroupModal: React.FC = ({isModalOpen, onClose, group}: ManageGroupMo
     const [isLoadingWordsToAdd, setIsLoadingWordsToAdd] = useState<boolean>(true);
     const [newWordToAdd, setNewWordToAdd] = useState<string>('');
 
-    const [wordToSeeReferences, setWordToSeeReferences] = useState<string | undefined>(undefined);
+    const [wordsToSeeReferences, setWordsToSeeReferences] = useState<string[]>([]);
     const [isReferencesModalOpen, setIsReferencesModalOpen] = useState<boolean>(false);
 
     const style = {
@@ -66,8 +66,8 @@ const ManageGroupModal: React.FC = ({isModalOpen, onClose, group}: ManageGroupMo
         await _reloadPage();
     }
 
-    const _onClickSeeReferences = async (word: string) => {
-        setWordToSeeReferences(word);
+    const _onClickSeeReferences = async (referenceWords: string[]) => {
+        setWordsToSeeReferences(referenceWords);
         setIsReferencesModalOpen(true);
     }
 
@@ -78,7 +78,7 @@ const ManageGroupModal: React.FC = ({isModalOpen, onClose, group}: ManageGroupMo
 
     const closeModal = async () => {
         await setIsReferencesModalOpen(false);
-        await setWordToSeeReferences(undefined);
+        await setWordsToSeeReferences([]);
     }
     return (
         <Modal
@@ -86,9 +86,17 @@ const ManageGroupModal: React.FC = ({isModalOpen, onClose, group}: ManageGroupMo
             onClose={onClose}>
             <Box sx={style} className={'flex flex-col gap-4'}>
                 <div className={'flex flex-col gap-2 overflow-scroll h-full'}>
-                    <Typography variant={"h6"} component={"h2"}>
-                        {group.name} (ID: {group.id})
-                    </Typography>
+                    <div className={'flex flex-row justify-items-center'}>
+                        <Typography variant={"h6"} component={"h2"}>
+                            {group.name} (ID: {group.id})
+                        </Typography>
+                        <Tooltip title="See references for all words in the group">
+                            <IconButton edge="end" aria-label="delete"
+                                        onClick={() => _onClickSeeReferences(words)}>
+                                <UnfoldMoreIcon/>
+                            </IconButton>
+                        </Tooltip>
+                    </div>
                     <Typography variant={"h6"} component={"h3"}>
                         Add new word
                     </Typography>
@@ -123,7 +131,7 @@ const ManageGroupModal: React.FC = ({isModalOpen, onClose, group}: ManageGroupMo
                                     <div className={'flex flex-row gap-1'}>
                                         <Tooltip title="See references">
                                             <IconButton edge="end" aria-label="delete"
-                                                        onClick={() => _onClickSeeReferences(word)}>
+                                                        onClick={() => _onClickSeeReferences([word])}>
                                                 <UnfoldMoreIcon/>
                                             </IconButton>
                                         </Tooltip>
@@ -142,10 +150,10 @@ const ManageGroupModal: React.FC = ({isModalOpen, onClose, group}: ManageGroupMo
                     )}
                 </div>
                 {
-                    wordToSeeReferences && <SeeWordReferencesModal
+                    wordsToSeeReferences.length > 0 && <SeeWordReferencesModal
                         isModalOpen={isReferencesModalOpen}
                         onClose={closeModal}
-                        word={wordToSeeReferences}/>
+                        words={wordsToSeeReferences}/>
                 }
             </Box>
         </Modal>
