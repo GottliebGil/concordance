@@ -9,6 +9,8 @@ function UploadSong() {
     const [songName, setSongName] = useState<String>("");
     const [artistName, setArtistName] = useState<String>("");
     const [errors, setErrors] = useState<string[]>([]);
+    const [uploads, setUploads] = useState<string[]>([]);
+    const [isUploading, setIsUploading] = useState<boolean>(false);
 
     const hasManyFiles = useMemo(() => files.length > 0, [files]);
 
@@ -17,12 +19,14 @@ function UploadSong() {
             const splitFileName = file.name.split(' - ');
             if (splitFileName.length != 2) {
                 setErrors(["Every selected file name must be of the format ARTIST_NAME - SONG_NAME"]);
+                setUploads([]);
                 setFiles([]);
                 return;
             }
         }
         setFiles(newFiles);
         setErrors([]);
+        setUploads([]);
     };
 
     const _doUpload = async (file) => {
@@ -44,19 +48,25 @@ function UploadSong() {
     }
 
     const handleUpload = async () => {
+        setIsUploading(true);
         const errorsInUpload = []
+        const successStories = []
         for (const file of files) {
             try {
                 const response = await _doUpload(file);
                 const parsedResponse = await response.json()
                 if (response.status === 400) {
                     errorsInUpload.push(`${file.name}: ${parsedResponse.detail}`)
+                } else {
+                    successStories.push(file.name);
                 }
             } catch (e) {
                 errorsInUpload.push(`${file.name}: Unknown error`)
             }
         }
         setErrors(errorsInUpload);
+        setUploads(successStories);
+        setIsUploading(false);
     };
 
     return (
@@ -71,6 +81,16 @@ function UploadSong() {
                         disabled={files.length === 0}
                         onClick={handleUpload}>Upload</Button>
                 </div>
+                {
+                    uploads.length > 0 && (
+                        <div className={'flex flex-col gap-1'}>
+                            <div>Successfully uploaded</div>
+                            <div className={'flex flex-col gap-1'}>{uploads.map((songName, index) => (
+                                <div>{songName}</div>
+                            ))}</div>
+                        </div>
+                    )
+                }
                 {
                     errors && (
                         <div className={'flex flex-col gap-1 text-red-400'}>{errors.map((error, index) => (
